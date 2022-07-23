@@ -16,3 +16,4 @@ picture 2: custormer segmentation - the classical categories (demographic, behav
 #### Can we do the job with a rather simple Neural Network?
 
 
+Link: https://github.com/CheeAnt/Custormer-Segmentation
