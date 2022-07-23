@@ -15,14 +15,17 @@ Original file is located at
 import os
 import pickle
 import datetime
+import numpy as np
 import pandas as pd
+import seaborn as sns 
 from os.path import join
+import matplotlib.pyplot as plt 
+
 
 from imblearn.over_sampling import SMOTE
 
 from sklearn.preprocessing import \
     LabelEncoder, OneHotEncoder, MinMaxScaler, StandardScaler
-
 
 from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.linear_model import LogisticRegression
@@ -30,13 +33,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
 
 import tensorflow as tf
+from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import Input, Sequential, Model
 from tensorflow.keras.layers import Flatten, Dense, Dropout, BatchNormalization
 
-
-
 #self module
-from customer_segmentation_module import EDA, cramers_corrected_stat, MODEL, ModelEvaluation
+from customer_segmentation_module import \
+    EDA, MODEL, cramers_corrected_stat
 
 """### CONSTANTS"""
 
@@ -66,6 +70,9 @@ df.info()
 #checking the missing values in datasets
 df.isna().sum()
 
+#dropping id, and col that has too many NAN and now way to impute
+df = df.drop(['id','days_since_prev_campaign_contact'], axis=1)
+
 #check for imbalance datasets
 display(df.groupby('term_deposit_subscribed',dropna=False)['term_deposit_subscribed'].size())
 
@@ -74,14 +81,8 @@ display(df.groupby('term_deposit_subscribed',dropna=False)['term_deposit_subscri
 ### Cat vs Col
 """
 
-#dropping id col
-
-df = df.drop(labels='id', axis=1)
-
 #identifying categorical vs continuos data
 df.nunique()
-
-df = df.drop(labels='days_since_prev_campaign_contact', axis=1)
 
 display(df['marital'].unique(),
         df['communication_type'].unique(),
@@ -105,25 +106,13 @@ EDA.countplot_graph(cat,df,'inferno')
 
 """# 4 Data Cleaning
 
-### Converting nan to 0
+### Dealing with Unknown Values
 """
-
-#Verifying the dependency between df.days_since_prev_campaign_contact with num_contacts_prev_campaign
-
-df.query('days_since_prev_campaign_contact.isnull() \
-          and num_contacts_prev_campaign == 0',engine='python')
-
-df.days_since_prev_campaign_contact.isna().sum()
-
-#since there is no ways to impute this column, we will need to drop it
-df = df.drop(labels='days_since_prev_campaign_contact',axis = 1)
-
-"""### Dealing with Unknown Values"""
 
 df.nunique()
 
+#checking the ratio of NAN & unknown data
 #.count can't include object nan, but .size would
-
 display(df.groupby('marital',dropna=False)['marital'].size(),
         df.groupby('communication_type',dropna=False)['communication_type'].size(),
         df.groupby('prev_campaign_outcome',dropna=False)['prev_campaign_outcome'].size())
@@ -132,36 +121,20 @@ display(df.groupby('marital',dropna=False)['marital'].size(),
 
 df.isna().sum()
 
-#can we just drop app the rows with NAN?
+#can we just drop all the rows with NAN?
 df_na = df[df.isna().any(axis=1)]
 
 df.describe().T
 
-#comparing the data distribution
+#comparing the data distribution of rows with NAN vs the main distribution
 df_na.describe().T
 
-"""the data distribution of the na columns are within the range of the main distribution, thus, we could drop all the na columns"""
-
-# EDA.displot_graph(con,df_na,color='k')
-
-# EDA.countplot_graph(cat,df_na,'inferno')
-
-#pairplots to check the distribution before vs after
+"""the data distribution of the na columns are within the range of the main distribution, thus, we could savely drop all the rows with na without skewing the main distribution"""
 
 #try to drop everything
 df = df.dropna(axis=0)
 
 df.isna().sum()
-
-# #fill with median and mode for now - review later
-
-# for i in con:
-#   df[i] = df[i].fillna(df[i].median())
-
-# for i in cat:
-#   df[i] = df[i].fillna(df[i].mode()[0])
-
-# df.isna().sum()
 
 """### Duplicated Data"""
 
@@ -182,7 +155,7 @@ for i in cat:
     temp = df[i]
     temp[temp.notnull()]=le.fit_transform(temp[df[i].notnull()])
     df[i]= pd.to_numeric(df[i], errors = 'coerce')
-    PICKLE_SAVE_PATH = os.path.join(os.getcwd(),i+'encoder.pkl')
+    PICKLE_SAVE_PATH = os.path.join(os.getcwd(),'model',i+'encoder.pkl')
     with open(PICKLE_SAVE_PATH, 'wb') as file: 
         pickle.dump(le,file)
 i + '.pkl'
@@ -210,12 +183,12 @@ y = df['term_deposit_subscribed'].astype(int)
 mms = MinMaxScaler()
 X = mms.fit_transform(X)
 
-MMS_PATH = os.path.join(os.getcwd(),'mms.pkl')
+MMS_PATH = os.path.join(os.getcwd(),'model','mms.pkl')
 
 with open(MMS_PATH,'wb') as file:
   pickle.dump(mms,file)
 
-X_train,X_test,y_train,y_test = train_test_split(X,y,test_size = 0.3, random_state=131)
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size = 0.3, random_state=413)
 
 #display the size of y_train by categories
 print("Before SMOTE, size of label '1': {}".format(sum(y_train==1)))
@@ -236,8 +209,13 @@ ohe = OneHotEncoder(sparse=False)
 y_train = ohe.fit_transform(np.expand_dims(y_train,axis=-1))
 y_test = ohe.transform(np.expand_dims(y_test,axis=-1))
 
-nb_class = len(np.unique(y,axis=0))
+nb_class = len(np.unique(y_train,axis=0))
+input_shape = np.shape(X_train)[1:]
 
+nn = MODEL()
+model = nn.nn_model(input_shape,nb_class,128,0.2)
+
+'''
 model = Sequential()
 model.add(Input(shape=np.shape(X_train)[1:]))
 model.add(Dense(128,activation='relu'))
@@ -251,6 +229,7 @@ model.add(BatchNormalization())
 model.add(Dropout(0.2))
 model.add(Dense(nb_class,activation = 'softmax'))
 model.summary()
+'''
 
 from tensorflow.keras.utils import plot_model
 plot_model(model,show_shapes=(True))
@@ -259,16 +238,10 @@ model.compile(optimizer='adam',
               loss='categorical_crossentropy', 
               metrics=['accuracy'])
 
-hist = model.fit(X_train,y_train,epochs=10,
-                validation_data=(X_test,y_test))
-
-from tensorflow.keras.callbacks import TensorBoard
-from tensorflow.keras.callbacks import EarlyStopping
-
 #callbacks
 tensorboard_callback = TensorBoard(log_dir=LOGS_PATH,histogram_freq=1)
 
-early_callback = EarlyStopping(monitor='val_loss',patience=5)
+early_callback = EarlyStopping(monitor='val_loss',patience=4)
 
 
 hist = model.fit(X_train,y_train,
@@ -306,7 +279,7 @@ print(cr)
 
 disp = ConfusionMatrixDisplay(confusion_matrix=cm,display_labels =labels)
 disp.plot(cmap='RdPu')
-plt.rcParams['figure.figsize'] = [5, 5]
+plt.rcParams['figure.figsize'] = [7, 7]
 plt.show()
 
 print(classification_report)
@@ -319,7 +292,6 @@ tensorboard --logdir "/content/logs"
 
 """# Model Saving"""
 
-MODEL_SAVE_PATH = os.path.join(os.getcwd(),'model.h5')
 model.save(MODEL_SAVE_PATH)
 
 #zipping all the file generated from this runtime
