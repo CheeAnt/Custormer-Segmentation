@@ -1,4 +1,4 @@
-# Custormer Segmentation - Accuracy, F1, Recall, Precision, Which to Optimize On?
+# Custormer Segmentation - Accuracy, F1, Recall, Which to Optimize On?
 
 ###### The classical trade-off of an imbalanced dataset, and why the model with the highest accuracy doesn't always make the best model. 
 
@@ -17,10 +17,12 @@ Either a custormer **subscribe** a term deposit (+ve), or **not** (-ve).
 
 That gives us 4 classes of output, with different weightage to the marketing team.
 
-- True Positive (**TP**): Customer subscribe and the prediction is +ve, the highest value class for this campaign :heart_eyes:
-- True Negative (**TN**): Customer do not subscribe and the prediction is -ve, filtering them helps to maximise our marketing budget :sunglasses:
-- False Positive (**FP**): Customer do not subscribe but the prediction is +ve, wasting some of the bank's resources here :grimacing:
-- False Negative (**FN**): Customer subscribe but the prediction is -ve, ***BAD*** , bank losing revenue and we're losing our job here :scream:
+| Class | Weightage|
+| ---   | ---      |
+| True Positive (**TP**)| Customer subscribe and the prediction is +ve, the highest value class for this campaign :heart_eyes: |
+| True Negative (**TN**)| Customer do not subscribe and the prediction is -ve, filtering them helps to maximise our marketing budget :sunglasses: |
+| False Positive (**FP**)| Customer do not subscribe but the prediction is +ve, wasting some of the bank's resources here :grimacing: |
+| False Negative (**FN**)| Customer subscribe but the prediction is -ve, ***BAD*** , bank losing revenue and we're losing our job here :scream: |
 
 
 
