@@ -1,60 +1,54 @@
-# Custormer Segmentation - Accuracy, F1, Recall, Which to Optimize On?
+# Custormer Segmentation - Accuracy, F1, Recall, Which Metric to Optimize?
 
-###### The classical trade-off of an imbalanced dataset, and why the model with the highest accuracy doesn't always make the best model. 
+##### The classical trade-off of an imbalanced dataset, and why the model with the highest accuracy doesn't always make the best model. 
 
+## Problem Statement 🏦
+Our bank has been facing declining revenues lately. To combat this, they've initiated marketing campaigns to encourage more deposits. 
 
-# The Problem
-A bank experienced decline in revenues and decided to conduct marketing campaigns to persuade more clients to deposit money into the bank.
+They opted to develop a deep-learning model to forecast the campaign's results. 
+This enables the marketing team to pinpoint a customer segment with high potential, allowing for targeted marketing efforts. 
+Simultaneously, it minimizes ad spend on customers who are less likely to subscribe.
 
-They decided to build a deep learning model that predicts the campaign outcome. This will help the marketing team to identify a high potential customer pool, empowering them to perform precise marketing to the target group. At the same time, reducing the advertisement spent on customers that have a low chance of signing up.
-
-
-# The Output
+## Model Output
 ![image](https://user-images.githubusercontent.com/29735171/181032729-45f45d8a-21cf-4815-8160-e62a52be8f0d.png)
 
+**Accuracy at 0.91**, sounds like a fantastic model, right?
 
-Either a custormer **subscribe** a term deposit (+ve), or **not** (-ve).
+Well, not so fast! The marketing manager has some concerns.
+
+## Model Evaluation
+When customers see our campaign, they either **subscribe** to a term deposit or **don't**. This gives us four possible outcomes:
+
 
 That gives us 4 classes of output, with different weightage to the marketing team.
 
-| Class | Weightage|
+| Class | Description |
 | ---   | ---      |
-| True Positive (**TP**)| Customer subscribe and the prediction is +ve, the highest value class for this campaign :heart_eyes: |
-| True Negative (**TN**)| Customer do not subscribe and the prediction is -ve, filtering them helps to maximise our marketing budget :sunglasses: |
-| False Positive (**FP**)| Customer do not subscribe but the prediction is +ve, wasting some of the bank's resources here :grimacing: |
-| False Negative (**FN**)| Customer subscribe but the prediction is -ve, ***BAD*** , bank losing revenue and we're losing our job here :scream: |
+| True Positive (**TP**)| Customers subscribed, just as we predicted it! :heart_eyes: |
+| True Negative (**TN**)| Customers didn't subscribe, and we accurately anticipated it. This foresight optimizes our marketing budget :sunglasses: |
+| False Positive (**FP**)| Oops! We expected these customers to subscribe, but they didn't. This misjudgment costs the bank :grimacing: |
+| False Negative (**FN**)| Oh no! These customers subscribed, but we missed it. ***BAD***, Bank losing revenue and we're losing our job here :scream: |
 
 
+## Recall - When the TP Class is Super Important 
 
-# Model Building - Without Oversampling the Data
-![image](https://user-images.githubusercontent.com/29735171/181026721-a676e5c2-5856-490a-8061-be2b10ca92d5.png)
+Looking at the recall of the **TP**, it's only 0.37. 
+This means that out of 1000 customers who actually sign up, our model mistakenly labels 630 of them as not interested! 😱
 
-**Accuracy at 0.91**, a very good model, right?
+Suddenly, this model doesn't seem so great for our campaign.
 
-Not really, says the marketing manager.
-
-
-
-# Recall -  When the TP class is way more important than the others
-
-If we study the recall of the **TP**, which is at 0.37.
-It means that, of 1000 customers that actually signs up, our model will mark 630 of them as negative! 
-
-This model now seems ridiculous for the campaign. 
 
 # SMOTE - Oversampling Imbalanced Datasets
-
 
 ![image](https://user-images.githubusercontent.com/29735171/181029001-8fe0db40-d58a-421a-970d-c613ca3b7882.png)
 ![image](https://user-images.githubusercontent.com/29735171/181032095-edeb0fe0-e589-4973-a625-3e1e5d05c9b5.png)
 
-After resampling, our accuracy dropped to merely 0.84.
+After using SMOTE to resample our data, our accuracy took a hit, dropping to 0.84. 
+But here's the silver lining: the recall for TP shot up to 0.91! 🥳
 
-But hey! The sensitivity of TP now became 0.91!
+This means that out of 1000 customers who would subscribe, our model now catches 910 of them. 
+The marketing team is ecstatic! They can now confidently use our model to segment customers and supercharge their sales funnel.
 
-That means, of 1000 customers that would subscribe, our model is managed to catch 910 of them!
-
-The marketing team is very happy about the model, they can now confidently use our model to segment a customer pool for their sales funnel. 
 
 
 # Credits:
