@@ -9,8 +9,11 @@ They opted to develop a deep-learning model to forecast the campaign's results.
 This enables the marketing team to pinpoint a customer segment with high potential, allowing for targeted marketing efforts. 
 Simultaneously, it minimizes ad spend on customers who are less likely to subscribe.
 
-## Model Output
+## Dataset Given
 ![image](https://user-images.githubusercontent.com/29735171/181032729-45f45d8a-21cf-4815-8160-e62a52be8f0d.png)
+
+## Initial Model (No Oversampling)
+![Initial Model](https://user-images.githubusercontent.com/29735171/181026721-a676e5c2-5856-490a-8061-be2b10ca92d5.png)
 
 **Accuracy at 0.91**, sounds like a fantastic model, right?
 
