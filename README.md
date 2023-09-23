@@ -7,7 +7,7 @@ Our bank has been facing declining revenues lately. To combat this, they've init
 
 They opted to develop a deep-learning model to forecast the campaign's results. 
 This enables the marketing team to pinpoint a customer segment with high potential, allowing for targeted marketing efforts. 
-Simultaneously, it minimizes ad spend on customers who are less likely to subscribe.
+Simultaneously, it minimizes ad spending on customers who are less likely to subscribe.
 
 ## Dataset Given
 ![image](https://user-images.githubusercontent.com/29735171/181032729-45f45d8a-21cf-4815-8160-e62a52be8f0d.png)
@@ -20,14 +20,12 @@ Simultaneously, it minimizes ad spend on customers who are less likely to subscr
 Well, not so fast! The marketing manager has some concerns.
 
 ## Model Evaluation
-When customers see our campaign, they either **subscribe** to a term deposit or **don't**. This gives us four possible outcomes:
-
-
-That gives us 4 classes of output, with different weightage to the marketing team.
+When customers see our campaign, they either **subscribe** to a term deposit or **don't**. 
+This gives us four possible outcomes, with different weightage to the marketing team:
 
 | Class | Description |
 | ---   | ---      |
-| True Positive (**TP**)| Customers subscribed, just as we predicted it! :heart_eyes: |
+| True Positive (**TP**)| Customers subscribed, just as we predicted! :heart_eyes: |
 | True Negative (**TN**)| Customers didn't subscribe, and we accurately anticipated it. This foresight optimizes our marketing budget :sunglasses: |
 | False Positive (**FP**)| Oops! We expected these customers to subscribe, but they didn't. This misjudgment costs the bank :grimacing: |
 | False Negative (**FN**)| Oh no! These customers subscribed, but we missed it. ***BAD***, Bank losing revenue and we're losing our job here :scream: |
@@ -36,7 +34,7 @@ That gives us 4 classes of output, with different weightage to the marketing tea
 ## Recall - When the TP Class is Super Important 
 
 Looking at the recall of the **TP**, it's only 0.37. 
-This means that out of 1000 customers who actually sign up, our model mistakenly labels 630 of them as not interested! 😱
+This means that out of 1000 customers who sign up, our model mistakenly labels 630 of them as not interested! 😱
 
 Suddenly, this model doesn't seem so great for our campaign.
 
