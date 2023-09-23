@@ -39,7 +39,7 @@ This means that out of 1000 customers who sign up, our model mistakenly labels 6
 Suddenly, this model doesn't seem so great for our campaign.
 
 
-# SMOTE - Oversampling Imbalanced Datasets
+## SMOTE - Oversampling Imbalanced Datasets
 
 ![image](https://user-images.githubusercontent.com/29735171/181029001-8fe0db40-d58a-421a-970d-c613ca3b7882.png)
 ![image](https://user-images.githubusercontent.com/29735171/181032095-edeb0fe0-e589-4973-a625-3e1e5d05c9b5.png)
@@ -52,6 +52,6 @@ The marketing team is ecstatic! They can now confidently use our model to segmen
 
 
 
-# Credits:
+## Credits:
 ###### Datasource: [Kaggle](https://www.kaggle.com/datasets/kunalgupta2616/hackerearth-customer-segmentation-hackathon)
 
